@@ -26,26 +26,60 @@ namespace ImageResizeWebApp.Helpers
             return formats.Any(item => file.FileName.EndsWith(item, StringComparison.OrdinalIgnoreCase));
         }
 
-        public static async Task<bool> UploadFileToStorage(Stream fileStream, string fileName, AzureStorageConfig _storageConfig)
+       public static async Task<bool> UploadFileToStorage(Stream fileStream, string fileName, AzureStorageConfig _storageConfig)
+        {
+            string contentType;
+
+            if (fileName.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) ||
+                fileName.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase))
             {
-                // Create a URI to the blob
-                Uri blobUri = new Uri("https://" + _storageConfig.AccountName + ".blob.core.windows.net/" + _storageConfig.ImageContainer + "/" + fileName);
-
-                // Create StorageSharedKeyCredentials object by reading the values from the configuration (appsettings.json)
-                StorageSharedKeyCredential storageCredentials = new StorageSharedKeyCredential(_storageConfig.AccountName, _storageConfig.AccountKey);
-
-                // Create the blob client.
-                BlobClient blobClient = new BlobClient(blobUri, storageCredentials);
-
-                // Set the content type of the blob to the actual image MIME type
-                BlobHttpHeaders headers = new BlobHttpHeaders();
-                headers.ContentType = fileStream.ContentType;
-
-                // Upload the file with the specified headers
-                await blobClient.UploadAsync(fileStream, new BlobUploadOptions { HttpHeaders = headers });
-
-                return await Task.FromResult(true);
+                contentType = "image/jpeg";
             }
+            else if (fileName.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
+            {
+                contentType = "image/png";
+            }
+            else if (fileName.EndsWith(".gif", StringComparison.OrdinalIgnoreCase))
+            {
+                contentType = "image/gif";
+            }
+            else if (fileName.EndsWith(".webp", StringComparison.OrdinalIgnoreCase))
+            {
+                fileName = Path.ChangeExtension(fileName, ".jpg");
+                contentType = "image/jpeg";
+
+                using (var image = new WebImage(fileStream))
+                {
+                    using (var outputStream = new MemoryStream())
+                    {
+                        image.Save(outputStream, "jpg");
+                        fileStream = outputStream;
+                    }
+                }
+            }
+            else
+            {
+                throw new ArgumentException($"Unsupported file type: {fileName}");
+            }
+
+            // Create a URI to the blob
+            Uri blobUri = new Uri("https://" + _storageConfig.AccountName + ".blob.core.windows.net/" +
+                                  _storageConfig.ImageContainer + "/" + fileName);
+
+            // Create StorageSharedKeyCredentials object by reading
+            // the values from the configuration (appsettings.json)
+            StorageSharedKeyCredential storageCredentials = new StorageSharedKeyCredential(_storageConfig.AccountName, _storageConfig.AccountKey);
+
+            // Create the blob client.
+            BlobClient blobClient = new BlobClient(blobUri, storageCredentials);
+
+            // Upload the file
+            var blobHttpHeaders = new BlobHttpHeaders { ContentType = contentType };
+            await blobClient.UploadAsync(fileStream, blobHttpHeaders);
+
+            return await Task.FromResult(true);
+        }
+
 
 
         public static async Task<List<string>> GetThumbNailUrls(AzureStorageConfig _storageConfig)
