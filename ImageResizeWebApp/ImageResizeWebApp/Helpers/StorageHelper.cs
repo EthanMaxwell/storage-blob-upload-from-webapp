@@ -26,29 +26,27 @@ namespace ImageResizeWebApp.Helpers
             return formats.Any(item => file.FileName.EndsWith(item, StringComparison.OrdinalIgnoreCase));
         }
 
-        public static async Task<bool> UploadFileToStorage(Stream fileStream, string fileName,
-                                                            AzureStorageConfig _storageConfig)
-        {
-            // Create a URI to the blob
-            Uri blobUri = new Uri("https://" +
-                                  _storageConfig.AccountName +
-                                  ".blob.core.windows.net/" +
-                                  _storageConfig.ImageContainer +
-                                  "/" + fileName);
+        public static async Task<bool> UploadFileToStorage(Stream fileStream, string fileName, AzureStorageConfig _storageConfig)
+            {
+                // Create a URI to the blob
+                Uri blobUri = new Uri("https://" + _storageConfig.AccountName + ".blob.core.windows.net/" + _storageConfig.ImageContainer + "/" + fileName);
 
-            // Create StorageSharedKeyCredentials object by reading
-            // the values from the configuration (appsettings.json)
-            StorageSharedKeyCredential storageCredentials =
-                new StorageSharedKeyCredential(_storageConfig.AccountName, _storageConfig.AccountKey);
+                // Create StorageSharedKeyCredentials object by reading the values from the configuration (appsettings.json)
+                StorageSharedKeyCredential storageCredentials = new StorageSharedKeyCredential(_storageConfig.AccountName, _storageConfig.AccountKey);
 
-            // Create the blob client.
-            BlobClient blobClient = new BlobClient(blobUri, storageCredentials);
+                // Create the blob client.
+                BlobClient blobClient = new BlobClient(blobUri, storageCredentials);
 
-            // Upload the file
-            await blobClient.UploadAsync(fileStream);
+                // Set the content type of the blob to the actual image MIME type
+                BlobHttpHeaders headers = new BlobHttpHeaders();
+                headers.ContentType = fileStream.ContentType;
 
-            return await Task.FromResult(true);
-        }
+                // Upload the file with the specified headers
+                await blobClient.UploadAsync(fileStream, new BlobUploadOptions { HttpHeaders = headers });
+
+                return await Task.FromResult(true);
+            }
+
 
         public static async Task<List<string>> GetThumbNailUrls(AzureStorageConfig _storageConfig)
         {
