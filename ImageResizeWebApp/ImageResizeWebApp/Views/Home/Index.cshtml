@@ -75,10 +75,11 @@
             <!-- The Gallery as inline carousel, can be positioned anywhere on the page -->
             <div id="blueimp-gallery-carousel" class="blueimp-gallery blueimp-gallery-carousel">
                 <div class="slides"></div>
-                <a class="prev"></a>
-                <a class="next"></a>
+                <h3 class="title"></h3>
+                <a class="prev">‹</a>
+                <a class="next">›</a>
                 <a class="play-pause"></a>
-                <a class="fullscreen-toggle"></a>
+                <a class="fullscreen-toggle">UwU</a>
                 <ol class="indicator"></ol>
             </div>
         </div>
@@ -112,7 +113,7 @@
                                 fetchedImageLinks, // gallery links array
                                 {
                                     container: '#blueimp-gallery-carousel',
-                                    carousel: true
+                                    carousel: true,
                                 } // gallery options
                             );                    
                 } else {
@@ -142,12 +143,25 @@
         });
     }
 
+    // Get a reference to the button element
+var fullscreenToggle = document.querySelector('.fullscreen-toggle');
+
+// Attach a click event handler to the button
+fullscreenToggle.addEventListener('click', function() {
+  // Toggle full-screen mode
+  if (document.fullscreenElement) {
+    document.exitFullscreen();
+  } else {
+    document.documentElement.requestFullscreen();
+  }
+});
+
     // Start first interval
     fetchImageLinks()
     
     setInterval(function() {
         fetchImageLinks()
-    }, 5000) 
+    }, 60000) 
 
     /* Dropzone */
     // "imageUpload" is the camelized version of the HTML element's ID
