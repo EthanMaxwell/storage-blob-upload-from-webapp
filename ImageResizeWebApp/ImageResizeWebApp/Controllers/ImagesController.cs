@@ -58,10 +58,7 @@ namespace ImageResizeWebApp.Controllers
 
                 if (isUploaded)
                 {
-                    if (storageConfig.ThumbnailContainer != string.Empty)
-                        return new AcceptedAtActionResult("GetThumbNails", "Images", null, null);
-                    else
-                        return new AcceptedResult();
+                    return new AcceptedResult();
                 }
                 else
                     return BadRequest("Look like the image couldnt upload to the storage");
@@ -72,25 +69,5 @@ namespace ImageResizeWebApp.Controllers
             }
         }
 
-        // GET /api/images/thumbnails
-        [HttpGet("thumbnails")]
-        public async Task<IActionResult> GetThumbNails()
-        {
-            try
-            {
-                if (storageConfig.AccountKey == string.Empty || storageConfig.AccountName == string.Empty)
-                    return BadRequest("Sorry, can't retrieve your Azure storage details from appsettings.js, make sure that you add Azure storage details there.");
-
-                if (storageConfig.ImageContainer == string.Empty)
-                    return BadRequest("Please provide a name for your image container in Azure blob storage.");
-
-                List<string> thumbnailUrls = await StorageHelper.GetThumbNailUrls(storageConfig);
-                return new ObjectResult(thumbnailUrls);            
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
     }
 }
