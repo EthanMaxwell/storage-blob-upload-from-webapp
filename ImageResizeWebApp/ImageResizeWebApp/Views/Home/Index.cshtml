@@ -144,25 +144,14 @@
     }
 
     $(document).ready(function () {
-        // Initialize the gallery
-        $('#blueimp-gallery').blueimpGallery({
-            // Remove the "openOnStart" option to disable auto opening
-        });
-
         // Add an event listener to the button to open the gallery
         $('#open-gallery-btn').on('click', function (event) {
             event.preventDefault();
+            fetchImageLinks();
             $('#blueimp-gallery').data('gallery').open(0); // Open the gallery at the first image
+            gallery.open();
         });
     });
-
-
-    // Start first interval
-    fetchImageLinks()
-
-    setInterval(function () {
-        fetchImageLinks()
-    }, 60000)
 
     /* Dropzone */
     // "imageUpload" is the camelized version of the HTML element's ID
