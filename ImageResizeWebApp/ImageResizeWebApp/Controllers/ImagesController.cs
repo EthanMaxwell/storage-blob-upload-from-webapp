@@ -58,7 +58,7 @@ namespace ImageResizeWebApp.Controllers
 
                 if (isUploaded)
                 {
-                    if (storageConfig.ThumbnailContainer != string.Empty)
+                    if (storageConfig.ImageContainer != string.Empty)
                         return new AcceptedAtActionResult("GetThumbNails", "Images", null, null);
                     else
                         return new AcceptedResult();
