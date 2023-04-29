@@ -42,7 +42,7 @@ namespace ImageResizeWebApp.Helpers
             BlobClient blobClient = new BlobClient(blobUri, storageCredentials);
 
             // Upload the file
-            var blobHttpHeaders = new BlobHttpHeaders { ContentType = "image/" + Path.GetExtension(fileName) };
+            var blobHttpHeaders = new BlobHttpHeaders { ContentType = "image/" + Path.GetExtension(fileName).TrimStart('.')};
             await blobClient.UploadAsync(fileStream, blobHttpHeaders);
 
             return await Task.FromResult(true);
