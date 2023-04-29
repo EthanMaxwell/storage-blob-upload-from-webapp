@@ -28,7 +28,7 @@ namespace ImageResizeWebApp.Helpers
 
        public static async Task<bool> UploadFileToStorage(Stream fileStream, string fileName, AzureStorageConfig _storageConfig)
         {
-            filename = filename.Replace(".webp", ".jpg");
+            fileName = fileName.Replace(".webp", ".jpg");
 
             // Create a URI to the blob
             Uri blobUri = new Uri("https://" + _storageConfig.AccountName + ".blob.core.windows.net/" +
