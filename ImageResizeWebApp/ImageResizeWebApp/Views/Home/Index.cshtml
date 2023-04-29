@@ -3,8 +3,10 @@
 }
 
 <!-- Client side libs required  -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.1.1/min/dropzone.min.css" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/blueimp-gallery/2.25.2/css/blueimp-gallery.min.css" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.1.1/min/dropzone.min.css"
+    crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/blueimp-gallery/2.25.2/css/blueimp-gallery.min.css"
+    crossorigin="anonymous">
 
 <style>
     html {
@@ -50,16 +52,13 @@
     <div class="box header">
         <h1><span class="fa fa-user-circle-o"></span> <span id="page-title">ImageUploader</span></h1>
     </div>
-    
+
     <div class="box content">
         <hr>
         <h2>Image Uploader</h2>
         <div>
-            <form action="/api/images/upload"
-                 class="dropzone needsclick dz-clickable" 
-                 id="image-upload"
-                 method="post"
-                 enctype="multipart/form">
+            <form action="/api/images/upload" class="dropzone needsclick dz-clickable" id="image-upload" method="post"
+                enctype="multipart/form">
 
                 <div class="dz-message needsclick">
                     <span class="note needsclick">
@@ -69,20 +68,25 @@
             </form>
         </div>
         <h2>Generated Thumbnails</h2>
-            <!-- <p><span id="gallery-note">Gallery refreshes from storage container image links every 5 seconds.</span></p> -->
-            <div id="stored-images"></div>
+        <!-- <p><span id="gallery-note">Gallery refreshes from storage container image links every 5 seconds.</span></p> -->
+        <div id="stored-images"></div>
 
-            <!-- The Gallery as inline carousel, can be positioned anywhere on the page -->
-            <div id="blueimp-gallery" class="blueimp-gallery blueimp-gallery-svgasimg blueimp-gallery-smil blueimp-gallery-controls" aria-label="image gallery" aria-modal="true" role="dialog" style="display: none;">
-      <div class="slides" aria-live="polite" style="width: 95800px;"></div>
-      <h3 class="title">GoldenSunrise2Dsmaller (2)</h3>
-      <a class="prev" aria-controls="blueimp-gallery" aria-label="previous slide" aria-keyshortcuts="ArrowLeft"></a>
-      <a class="next" aria-controls="blueimp-gallery" aria-label="next slide" aria-keyshortcuts="ArrowRight"></a>
-      <a class="close" aria-controls="blueimp-gallery" aria-label="close" aria-keyshortcuts="Escape"></a>
-      <a class="play-pause" aria-controls="blueimp-gallery" aria-label="play slideshow" aria-keyshortcuts="Space" aria-pressed="false" role="button"></a>
-      <ol class="indicator"></ol>
-    </div>
+        <!-- The Gallery as inline carousel, can be positioned anywhere on the page -->
+        <div id="blueimp-gallery"
+            class="blueimp-gallery blueimp-gallery-svgasimg blueimp-gallery-smil blueimp-gallery-controls"
+            aria-label="image gallery" aria-modal="true" role="dialog" style="display: none;">
+            <div class="slides" aria-live="polite" style="width: 95800px;"></div>
+            <h3 class="title">Slideshow</h3>
+            <a class="prev" aria-controls="blueimp-gallery" aria-label="previous slide" aria-keyshortcuts="ArrowLeft">
+                << /a>
+                    <a class="next" aria-controls="blueimp-gallery" aria-label="next slide"
+                        aria-keyshortcuts="ArrowRight">></a>
+                    <a class="close" aria-controls="blueimp-gallery" aria-label="close" aria-keyshortcuts="Escape">x</a>
+                    <a class="play-pause" aria-controls="blueimp-gallery" aria-label="play slideshow"
+                        aria-keyshortcuts="Space" aria-pressed="false" role="button"></a>
+                    <ol class="indicator"></ol>
         </div>
+    </div>
     </div>
 </main>
 
@@ -98,30 +102,30 @@
     // Grab links for images from backend api
     function fetchImageLinks() {
         // Fetch images
-        $.get("api/Images/thumbnails", function(fetchedImageLinks) {
+        $.get("api/Images/thumbnails", function (fetchedImageLinks) {
             console.log(fetchedImageLinks)
 
             // Check if anything is in there
-            if ( _.isEmpty(fetchedImageLinks) ){
+            if (_.isEmpty(fetchedImageLinks)) {
                 console.log('empty fetched')
                 // do nothing  
             } else {
                 // Check if we have a gallery initialized
-                if ( _.isEmpty(gallery) ) {
+                if (_.isEmpty(gallery)) {
                     // initialize gallery
                     gallery = blueimp.Gallery(
-                                fetchedImageLinks, // gallery links array
-                                {
-                                    container: '#blueimp-gallery',
-                                    carousel: true,
-                                } // gallery options
-                            );                    
+                        fetchedImageLinks, // gallery links array
+                        {
+                            container: '#blueimp-gallery',
+                            carousel: true,
+                        } // gallery options
+                    );
                 } else {
                     // check if images are equal to array
                     console.log('currently in gallery:')
                     console.log(gallery.list)
                     var imageLinksEqual = _.isEqual(_.sortBy(gallery.list.map(s => s.split("?")[0])), _.sortBy(fetchedImageLinks.map(s => s.split("?")[0])))
-                    if ( imageLinksEqual ) {
+                    if (imageLinksEqual) {
                         console.log('images arr are equal')
                         // do nothing
                     } else {
@@ -138,17 +142,17 @@
                         // Force image load
                         gallery.next();
                     }
-                }       
-            }     
+                }
+            }
         });
     }
 
     // Start first interval
     fetchImageLinks()
-    
-    setInterval(function() {
+
+    setInterval(function () {
         fetchImageLinks()
-    }, 60000) 
+    }, 60000)
 
     /* Dropzone */
     // "imageUpload" is the camelized version of the HTML element's ID
@@ -156,13 +160,13 @@
         paramName: "files", // The name that will be used to transfer the file
         dictDefaultMessage: "Drop files here or Click to Upload",
         addRemoveLinks: true, // Allows for cancellation of file upload and remove thumbnail
-        init: function() {
+        init: function () {
             myDropzone = this;
-            myDropzone.on("success", function(file, response) {
+            myDropzone.on("success", function (file, response) {
                 console.log("Success");
                 myDropzone.removeFile(file);
-            });                    
+            });
         }
     };
 </script>
-<script src="js/blueimp-gallery.min.js"></script>
+
