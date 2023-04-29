@@ -28,39 +28,7 @@ namespace ImageResizeWebApp.Helpers
 
        public static async Task<bool> UploadFileToStorage(Stream fileStream, string fileName, AzureStorageConfig _storageConfig)
         {
-            string contentType;
-
-            if (fileName.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) ||
-                fileName.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase))
-            {
-                contentType = "image/jpeg";
-            }
-            else if (fileName.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
-            {
-                contentType = "image/png";
-            }
-            else if (fileName.EndsWith(".gif", StringComparison.OrdinalIgnoreCase))
-            {
-                contentType = "image/gif";
-            }
-            else if (fileName.EndsWith(".webp", StringComparison.OrdinalIgnoreCase))
-            {
-                fileName = Path.ChangeExtension(fileName, ".jpg");
-                contentType = "image/jpeg";
-
-                using (var image = new WebImage(fileStream))
-                {
-                    using (var outputStream = new MemoryStream())
-                    {
-                        image.Save(outputStream, "jpg");
-                        fileStream = outputStream;
-                    }
-                }
-            }
-            else
-            {
-                throw new ArgumentException($"Unsupported file type: {fileName}");
-            }
+            filename = filename.replace(".webp", ".jpg");
 
             // Create a URI to the blob
             Uri blobUri = new Uri("https://" + _storageConfig.AccountName + ".blob.core.windows.net/" +
@@ -74,7 +42,7 @@ namespace ImageResizeWebApp.Helpers
             BlobClient blobClient = new BlobClient(blobUri, storageCredentials);
 
             // Upload the file
-            var blobHttpHeaders = new BlobHttpHeaders { ContentType = contentType };
+            var blobHttpHeaders = new BlobHttpHeaders { ContentType = "image" };
             await blobClient.UploadAsync(fileStream, blobHttpHeaders);
 
             return await Task.FromResult(true);
