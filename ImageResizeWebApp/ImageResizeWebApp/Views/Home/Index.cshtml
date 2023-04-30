@@ -67,23 +67,8 @@
                 </div>
             </form>
         </div>
-        <div id="imageContainer"></div>
-        <button id="open-gallery-btn">Open Gallery</button>
-        <!-- <p><span id="gallery-note">Gallery refreshes from storage container image links every 5 seconds.</span></p> -->
         <div id="stored-images"></div>
-
-        <div id="blueimp-gallery" class="blueimp-gallery blueimp-gallery-controls" aria-label="image gallery"
-            aria-modal="true" role="dialog">
-            <div class="slides" aria-live="polite"></div>
-            <h3 class="title"></h3>
-            <a class="prev" aria-controls="blueimp-gallery" aria-label="previous slide"
-                aria-keyshortcuts="ArrowLeft"></a>
-            <a class="next" aria-controls="blueimp-gallery" aria-label="next slide" aria-keyshortcuts="ArrowRight"></a>
-            <a class="close" aria-controls="blueimp-gallery" aria-label="close" aria-keyshortcuts="Escape"></a>
-            <a class="play-pause" aria-controls="blueimp-gallery" aria-label="play slideshow" aria-keyshortcuts="Space"
-                aria-pressed="false" role="button"></a>
-            <ol class="indicator"></ol>
-        </div>
+        <div id="imageContainer"></div>
     </div>
     </div>
 </main>
@@ -112,17 +97,6 @@
 
                 var container = document.getElementById('imageContainer');
 
-                var clickLink
-                var clickEvent
-
-                container.onclick = function (event) {
-                    event = event || window.event
-                    var target = event.target || event.srcElement
-                    var link = target.src ? target.parentNode : target
-                    clickLink = link;
-                    clickEvent = event;
-                }
-
                 for (var i = 0, j = fetchedImageLinks.length; i < j; i++) {
                     var a = document.createElement('a');
                     a.href = fetchedImageLinks[i];
@@ -131,55 +105,8 @@
                     a.appendChild(img)
                     container.appendChild(a);
                 }
-
-                // Check if we have a gallery initialized
-                if (_.isEmpty(gallery)) {
-                    // initialize gallery
-                    gallery = blueimp.Gallery(
-                        fetchedImageLinks, // gallery links array
-                        {
-                            container: '#blueimp-gallery',
-                            carousel: true,
-                            index: clickLink,
-                            event: clickEvent,
-                        } // gallery options
-                    );
-                } else {
-                    // check if images are equal to array
-                    console.log('currently in gallery:')
-                    console.log(gallery.list)
-                    var imageLinksEqual = _.isEqual(_.sortBy(gallery.list.map(s => s.split("?")[0])), _.sortBy(fetchedImageLinks.map(s => s.split("?")[0])))
-                    if (imageLinksEqual) {
-                        console.log('images arr are equal')
-                        // do nothing
-                    } else {
-                        console.log('images arr are not equal')
-
-                        // update gallery with new image urls. Only compare actual url without SAS token query string
-                        var newImageLinks = _.difference(fetchedImageLinks.map(s => s.split("?")[0]), gallery.list.map(s => s.split("?")[0]))
-
-                        console.log('differene is: ')
-                        console.log(newImageLinks)
-                        // Only add new images
-                        gallery.add(newImageLinks);
-
-                        // Force image load
-                        gallery.next();
-                    }
-                }
-            }
         });
     }
-
-    $(document).ready(function () {
-        // Add an event listener to the button to open the gallery
-        $('#open-gallery-btn').on('click', function (event) {
-            event.preventDefault();
-            fetchImageLinks();
-            $('#blueimp-gallery').show();
-            gallery.open(0);
-        });
-    });
 
     /* Dropzone */
     // "imageUpload" is the camelized version of the HTML element's ID
