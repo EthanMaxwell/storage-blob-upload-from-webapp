@@ -72,14 +72,16 @@
         <div id="stored-images"></div>
 
         <!-- The Gallery as inline carousel, can be positioned anywhere on the page -->
-        <div id="blueimp-gallery" class="blueimp-gallery blueimp-gallery">
-            <div class="slides"></div>
-            <h3 class="title"></h3>
-            <a class="prev">‹</a>
-            <a class="next">›</a>
-            <a class="play-pause"></a>
-            <a class="close">X</a>
-            <ol class="indicator"></ol>
+        <div id="hidden-gallery-container" style="display:none;">
+            <div id="blueimp-gallery" class="blueimp-gallery blueimp-gallery">
+                <div class="slides"></div>
+                <h3 class="title"></h3>
+                <a class="prev">‹</a>
+                <a class="next">›</a>
+                <a class="play-pause"></a>
+                <a class="close">X</a>
+                <ol class="indicator"></ol>
+            </div>
         </div>
     </div>
     </div>
@@ -111,7 +113,7 @@
                     gallery = blueimp.Gallery(
                         fetchedImageLinks, // gallery links array
                         {
-                            container: '#blueimp-gallery',
+                            container: '#hidden-gallery-container',
                             carousel: true,
                             openOnStart: false,
                         } // gallery options
@@ -148,8 +150,8 @@
         $('#open-gallery-btn').on('click', function (event) {
             event.preventDefault();
             fetchImageLinks();
-            $('#blueimp-gallery').data('gallery').open(0); // Open the gallery at the first image
-            gallery.open();
+            $('#hidden-gallery-container').show();
+            $('#hidden-gallery-container').data('gallery').open(0);
         });
     });
 
