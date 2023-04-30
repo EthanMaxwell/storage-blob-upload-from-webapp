@@ -62,7 +62,7 @@
 
                 <div class="dz-message needsclick">
                     <span class="note needsclick">
-                        Drop files here or click to upload.
+                        Drop files here or click to upload!
                     </span>
                 </div>
             </form>
@@ -98,14 +98,7 @@
     var gallery;
     fetchImageLinks();
 
-    document.getElementById('imageContainer').onclick = function (event) {
-        event = event || window.event
-        var target = event.target || event.srcElement
-        var link = target.src ? target.parentNode : target
-        var options = { index: link, event: event }
-        var links = this.getElementsByTagName('a')
-        blueimp.Gallery(links, options)
-    }
+    d
 
     // Grab links for images from backend api
     function fetchImageLinks() {
