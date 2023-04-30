@@ -97,17 +97,30 @@
 
     // Append images to imageContainer in a grid format
     function appendImages(images) {
-        var container = document.getElementById('imageContainer');
-        container.innerHTML = '';
+        var container = document.getElementById("imageContainer");
+        var displayedImages = container.getElementsByTagName("img");
 
-        for (var i = 0, j = images.length; i < j; i++) {
-            var a = document.createElement('a');
-            a.href = images[i];
-            a.target = "_blank";
-            var img = document.createElement('img');
-            img.src = images[i];
-            a.appendChild(img);
-            container.appendChild(a);
+        for (var i = 0, j = fetchedImageLinks.length; i < j; i++) {
+            var link = fetchedImageLinks[i];
+
+            // Check if image is already displayed
+            var isDisplayed = false;
+            for (var k = 0, l = displayedImages.length; k < l; k++) {
+                if (displayedImages[k].src === link) {
+                    isDisplayed = true;
+                    break;
+                }
+            }
+
+            // Append image if not already displayed
+            if (!isDisplayed) {
+                var a = document.createElement("a");
+                a.href = link;
+                var img = document.createElement("img");
+                img.src = link;
+                a.appendChild(img);
+                container.appendChild(a);
+            }
         }
     }
 
@@ -119,16 +132,7 @@
             if (_.isEmpty(fetchedImageLinks)) {
                 console.log('empty fetched');
             } else {
-                var imageLinksEqual = _.isEqual(_.sortBy(gallery.list.map(s => s.split("?")[0])), _.sortBy(fetchedImageLinks.map(s => s.split("?")[0])))
-                if (imageLinksEqual) {
-                    console.log('images arr are equal')
-                    // do nothing
-                } else {
-                    console.log('images arr are not equal')
-                    // update gallery with new image urls. Only compare actual url without SAS token query string
-                    var newImageLinks = _.difference(fetchedImageLinks.map(s => s.split("?")[0]), gallery.list.map(s => s.split("?")[0]))
-                    appendImages(newImageLinks);
-                }
+                appendImages(imageLinksEqual);
             });
     }
 
