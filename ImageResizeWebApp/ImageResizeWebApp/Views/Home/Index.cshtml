@@ -45,7 +45,8 @@
         display: block;
         margin-top 1.5rem;
     }
-        .image-grid {
+
+    .image-grid {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
@@ -118,9 +119,17 @@
             if (_.isEmpty(fetchedImageLinks)) {
                 console.log('empty fetched');
             } else {
-                appendImages(fetchedImageLinks);
-            }
-        });
+                var imageLinksEqual = _.isEqual(_.sortBy(gallery.list.map(s => s.split("?")[0])), _.sortBy(fetchedImageLinks.map(s => s.split("?")[0])))
+                if (imageLinksEqual) {
+                    console.log('images arr are equal')
+                    // do nothing
+                } else {
+                    console.log('images arr are not equal')
+                    // update gallery with new image urls. Only compare actual url without SAS token query string
+                    var newImageLinks = _.difference(fetchedImageLinks.map(s => s.split("?")[0]), gallery.list.map(s => s.split("?")[0]))
+                    appendImages(newImageLinks);
+                }
+            });
     }
 
     // init gallery for later use
@@ -140,6 +149,7 @@
             myDropzone.on("success", function (file, response) {
                 console.log("Success");
                 myDropzone.removeFile(file);
+                fetchImageLinks();
             });
         }
     };
