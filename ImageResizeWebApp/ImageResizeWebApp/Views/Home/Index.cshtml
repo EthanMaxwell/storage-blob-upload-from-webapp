@@ -100,6 +100,7 @@
                 for (var i = 0, j = fetchedImageLinks.length; i < j; i++) {
                     var a = document.createElement('a');
                     a.href = fetchedImageLinks[i];
+                    a.target = '_blank'; // Add target attribute to open link in new tab
                     var img = document.createElement('img');
                     img.src = fetchedImageLinks[i]; // img[i] refers to the current URL.
                     a.appendChild(img)
