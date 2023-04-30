@@ -45,6 +45,19 @@
         display: block;
         margin-top 1.5rem;
     }
+        .image-grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .image-grid img {
+        width: 200px;
+        height: 200px;
+        margin: 10px;
+        object-fit: cover;
+        cursor: pointer;
+    }
 </style>
 
 
@@ -68,7 +81,7 @@
             </form>
         </div>
         <div id="stored-images"></div>
-        <div id="imageContainer"></div>
+        <div class="image-grid" id="imageContainer"></div>
     </div>
     </div>
 </main>
@@ -79,36 +92,42 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
 
 <script>
-    // init gallery for later use
-    var gallery;
-    fetchImageLinks();
+    // fetchImageLinks function remains the same
 
-    // Grab links for images from backend api
+    // Append images to imageContainer in a grid format
+    function appendImages(images) {
+        var container = document.getElementById('imageContainer');
+        container.innerHTML = '';
+
+        for (var i = 0, j = images.length; i < j; i++) {
+            var a = document.createElement('a');
+            a.href = images[i];
+            a.target = "_blank";
+            var img = document.createElement('img');
+            img.src = images[i];
+            a.appendChild(img);
+            container.appendChild(a);
+        }
+    }
+
+    // On fetchImageLinks success, display images in grid format
     function fetchImageLinks() {
-        // Fetch images
         $.get("api/Images/thumbnails", function (fetchedImageLinks) {
             console.log(fetchedImageLinks)
 
-            // Check if anything is in there
             if (_.isEmpty(fetchedImageLinks)) {
-                console.log('empty fetched')
-                // do nothing  
+                console.log('empty fetched');
             } else {
-
-                var container = document.getElementById('imageContainer');
-
-                for (var i = 0, j = fetchedImageLinks.length; i < j; i++) {
-                    var a = document.createElement('a');
-                    a.href = fetchedImageLinks[i];
-                    a.target = '_blank'; // Add target attribute to open link in new tab
-                    var img = document.createElement('img');
-                    img.src = fetchedImageLinks[i]; // img[i] refers to the current URL.
-                    a.appendChild(img)
-                    container.appendChild(a);
-                }
+                appendImages(fetchedImageLinks);
             }
         });
     }
+
+    // init gallery for later use
+    var gallery;
+
+    // Fetch images on page load
+    fetchImageLinks();
 
     /* Dropzone */
     // "imageUpload" is the camelized version of the HTML element's ID
