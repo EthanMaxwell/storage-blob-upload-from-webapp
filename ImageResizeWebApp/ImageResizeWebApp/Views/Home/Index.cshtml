@@ -98,7 +98,6 @@
     var gallery;
     fetchImageLinks();
 
-
     // Grab links for images from backend api
     function fetchImageLinks() {
         // Fetch images
@@ -112,6 +111,17 @@
             } else {
 
                 var container = document.getElementById('imageContainer');
+
+                var clickLink
+                var clickEvent
+
+                container.onclick = function (event) {
+                    event = event || window.event
+                    var target = event.target || event.srcElement
+                    var link = target.src ? target.parentNode : target
+                    clickLink = link;
+                    clickEvent = event;
+                }
 
                 for (var i = 0, j = fetchedImageLinks.length; i < j; i++) {
                     var a = document.createElement('a');
@@ -130,6 +140,8 @@
                         {
                             container: '#blueimp-gallery',
                             carousel: true,
+                            index: clickLink,
+                            event: clickEvent,
                         } // gallery options
                     );
                 } else {
